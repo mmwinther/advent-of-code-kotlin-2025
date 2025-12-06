@@ -25,24 +25,19 @@ fun main() {
         input
             .split(",")
             .map { it.split("-") }
-            .map { it.first().toLong()..it.last().toLong() }
-            .sumOf { idRange ->
-                idRange.sumOf { id ->
-                    var sum = 0L
-                    id.toString().let { idString ->
-                        idString.length.divisors().let { divisors ->
-                            for (divisor in divisors) {
-                                idString.windowed(idString.length / divisor, idString.length / divisor, partialWindows = false).let { chunks ->
-                                    if (chunks.size > 1 && chunks.all { it == chunks.first() }) {
-                                        sum += id
-                                        break
-                                    }
-                                }
+            .flatMap { it.first().toLong()..it.last().toLong() }
+            .sumOf { id ->
+                val idString = id.toString()
+                idString.length.divisors().let { divisors ->
+                    for (divisor in divisors) {
+                        idString.chunked(idString.length / divisor).let { chunks ->
+                            if (chunks.size > 1 && chunks.all { it == chunks.first() }) {
+                                return@sumOf id
                             }
                         }
                     }
-                    sum
                 }
+                0L
             }
 
     val testInput = readInput("Day02_test")
