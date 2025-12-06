@@ -36,12 +36,28 @@ fun main() {
         return count
     }
 
+    fun part2(input: List<String>): Int {
+        val start = 50
+        var dialState: Int = start
+        var count = 0
+        input
+            .map {
+                Direction.of(it.first()) to
+                    it.drop(1).toInt()
+            }.forEach { instruction ->
+                repeat(instruction.second) {
+                    dialState = (dialState + instruction.first.sign) % 100
+                    if (dialState == 0) count++
+                }
+            }
+        return count
+    }
+
     val testInput = readInput("Day01_test")
     part1(testInput).also { assert(it == 3) { "Value $it was incorrect!" } }
-//    check(part2(testInput) == 31)
+    part2(testInput).also { assert(it == 6) { "Value $it was incorrect!" } }
 
-    // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day01")
     part1(input).println()
-//    part2(input).println()
+    part2(input).println()
 }
