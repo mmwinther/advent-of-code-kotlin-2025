@@ -1,4 +1,4 @@
-import java.math.BigInteger
+
 
 fun Int.divisors(): List<Int> = (2..this).filter { this % it == 0 }
 
@@ -28,12 +28,10 @@ fun main() {
             .flatMap { it.first().toLong()..it.last().toLong() }
             .sumOf { id ->
                 val idString = id.toString()
-                idString.length.divisors().let { divisors ->
-                    for (divisor in divisors) {
-                        idString.chunked(idString.length / divisor).let { chunks ->
-                            if (chunks.size > 1 && chunks.all { it == chunks.first() }) {
-                                return@sumOf id
-                            }
+                idString.length.divisors().forEach { divisor ->
+                    idString.chunked(idString.length / divisor).let { chunks ->
+                        if (chunks.size > 1 && chunks.all { it == chunks.first() }) {
+                            return@sumOf id
                         }
                     }
                 }
