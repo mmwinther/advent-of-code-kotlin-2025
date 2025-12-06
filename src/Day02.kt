@@ -1,5 +1,7 @@
 import java.math.BigInteger
 
+fun Int.divisors(): List<Int> = (2..this).filter { this % it == 0 }
+
 fun main() {
     fun part1(input: String): BigInteger =
         input
@@ -22,16 +24,42 @@ fun main() {
                 sum
             }
 
-//    fun part2(input: List<String>): Int = 0
+    fun part2(input: String): Long =
+        input
+            .split(",")
+            .map { it.split("-") }
+            .map { it.first().toLong()..it.last().toLong() }
+            .sumOf { idRange ->
+                idRange.sumOf { id ->
+                    var sum = 0L
+                    id.toString().let { idString ->
+                        idString.length.divisors().let { divisors ->
+                            for (divisor in divisors) {
+                                idString.windowed(idString.length / divisor, idString.length / divisor, partialWindows = false).let { chunks ->
+                                    if (chunks.size > 1 && chunks.all { it == chunks.first() }) {
+                                        println("Invalid ID: $chunks")
+                                        sum += id
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sum
+                }
+            }
 
     val testInput = readInput("Day02_test")
     part1(testInput.first()).also {
         println(it)
-        assert(it == 1227775554.toBigInteger()) { "Value $it was incorrect!" }
+        check(it == 1227775554.toBigInteger()) { "Value $it was incorrect!" }
     }
-//    part2(testInput).also { assert(it == 6) { "Value $it was incorrect!" } }
+    part2(testInput.first()).also {
+        println(it)
+        check(it == 4174379265L) { "Value $it was incorrect!" }
+    }
 
     val input = readInput("Day02")
     part1(input.first()).println()
-//    part2(input).println()
+    part2(input.first()).println()
 }
