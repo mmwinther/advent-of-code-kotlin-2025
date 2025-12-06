@@ -3,22 +3,19 @@ import java.math.BigInteger
 fun Int.divisors(): List<Int> = (2..this).filter { this % it == 0 }
 
 fun main() {
-    fun part1(input: String): BigInteger =
+    fun part1(input: String): Long =
         input
             .split(",")
             .map { it.split("-") }
-            .sumOf { idRange ->
-                var sum: BigInteger = 0.toBigInteger()
-                var id: BigInteger = idRange.first().toBigInteger()
-                while (id <= idRange.last().toBigInteger()) {
-                    id.toString().let { idString ->
-                        if (idString.length.isEven()) {
-                            val half = idString.length / 2
-                            if (idString.take(half) == idString.takeLast(half)) {
-                                sum += id
-                            }
+            .flatMap { it.first().toLong()..it.last().toLong() }
+            .sumOf { id ->
+                var sum = 0L
+                id.toString().let { idString ->
+                    if (idString.length.isEven()) {
+                        val half = idString.length / 2
+                        if (idString.take(half) == idString.takeLast(half)) {
+                            sum += id
                         }
-                        id++
                     }
                 }
                 sum
@@ -37,7 +34,6 @@ fun main() {
                             for (divisor in divisors) {
                                 idString.windowed(idString.length / divisor, idString.length / divisor, partialWindows = false).let { chunks ->
                                     if (chunks.size > 1 && chunks.all { it == chunks.first() }) {
-                                        println("Invalid ID: $chunks")
                                         sum += id
                                         break
                                     }
@@ -52,7 +48,7 @@ fun main() {
     val testInput = readInput("Day02_test")
     part1(testInput.first()).also {
         println(it)
-        check(it == 1227775554.toBigInteger()) { "Value $it was incorrect!" }
+        check(it == 1227775554L) { "Value $it was incorrect!" }
     }
     part2(testInput.first()).also {
         println(it)
